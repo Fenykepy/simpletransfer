@@ -3,8 +3,7 @@ import { Outlet } from "@remix-run/react"
 export default function TransfersRoute() {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">Transfers</h1>
-      <main>
+      <main className="max-w-3xl md:container md:mx-auto">
         <Outlet />
       </main>
     </div>

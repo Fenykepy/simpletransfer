@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  email          String   @unique
+  passwordHash   String
+  signature      String
+  transfers      Transfer[]
+}
+
+
+model Transfer {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  originalName   String
+  archiveName    String
+  archiveSize    Int
+  object         String
+  message        String
+  downloadDates  String     @default("[]")
+  complete       Boolean    @default(false)
+  active         Boolean    @default(true)
+  recipients     Recipient[]
+  userId         String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Recipient {
+  id             Int    @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  email          String
+  complete       Boolean    @default(false)
+  active         Boolean    @default(true)
+  downloadDates  String     @default("[]")
+  transferId     String
+  transfer       Transfer   @relation(fields: [transferId], references: [id], onDelete: Cascade)
+}
