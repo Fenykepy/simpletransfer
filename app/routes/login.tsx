@@ -5,7 +5,6 @@ import {
   useSearchParams,
 } from "@remix-run/react"
 
-import { db } from "~/utils/db.server"
 import { badRequest } from "~/utils/request.server"
 import {
   validateEmail,
@@ -56,7 +55,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   const user = await login({ email, password })
-  console.log({ user })
   if (!user) {
     return badRequest({
       fieldErrors: null,
@@ -64,15 +62,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       formError: "Incorrect credentials"
     })
   }
+  console.log("create session:", user.id, redirectTo)
   return createUserSession(user.id, redirectTo)
 }
 
 export default function Login() {
-const actionData = useActionData<typeof action>()
-const [searchParams] = useSearchParams()
+  const actionData = useActionData<typeof action>()
+  const [searchParams] = useSearchParams()
 
   return (
-    <div className="w-full max-w-lg bg-white shadow-lg rounded-md px-16 pt-12 pb-16 mx-auto my-8 border border-slate-900/10">
+    <div className="w-full max-w-lg bg-white shadow-lg rounded-md px-3 sm:px-16 pt-12 pb-8 sm:pb-16 mx-auto border border-slate-900/10">
       <h1 className="text-3xl font-semibold text-slate-700 text-center pb-8">Login</h1>
       <Form method="post">
         <input

@@ -28,7 +28,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-slate-50">
         <MainHeader />
-        {children}
+        <div className="p-3 sm:p-10">
+          {children}
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>

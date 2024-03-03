@@ -12,7 +12,7 @@ type LoginForm = {
 export async function register({ email, password }: LoginForm) {
   const passwordHash = await bcrypt.hash(password, 10)
   const user = await db.user.create({
-    data: { passwordHash, email }
+    data: { passwordHash, email, signature: "" }
   })
   return user
 }
@@ -37,7 +37,7 @@ if (!sessionSecret) {
 
 const storage = createCookieSessionStorage({
   cookie: {
-    name: "session",
+    name: "ST_session",
     // normally you want this to be `secture: true`
     // but that doesn't work on localhost for safari
     // https://web.dev/when-to-use-local-https/
@@ -57,7 +57,7 @@ function getUserSession(request: Request) {
 export async function getUserId(request: Request) {
   const session = await getUserSession(request)
   const userId = session.get("userId")
-  if (!userId || userId !== "string") {
+  if (!userId || typeof userId !== "string") {
     return null
   }
   return userId
