@@ -8,10 +8,13 @@ import {
 } from "@remix-run/react"
 
 import styles from "./tailwind.css?url"
+import MainHeader from "~/components/mainHeader"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
+  { rel: "stylesheet", href: "https://rsms.me/inter/inter.css"},
 ]
+
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -23,10 +26,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <title>SimpleTransfer</title>
         <Links />
       </head>
-      <body>
-        <header className="py-4 px-8 sticky top-0 z-40 w-full border-b border-slate-900/10">
-          <h1 className="text-2xl font-semibold">SimpleTransfer</h1>
-        </header>
+      <body className="bg-slate-50">
+        <MainHeader />
         {children}
         <ScrollRestoration />
         <Scripts />

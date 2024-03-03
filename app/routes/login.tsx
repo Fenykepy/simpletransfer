@@ -13,6 +13,12 @@ import {
 } from "~/utils/validate"
 import { createUserSession, login } from "~/utils/session.server"
 
+import Label from "~/components/label"
+import PrimaryButton from "~/components/primaryButton"
+import TextInput from "~/components/textInput"
+import FormError from "~/components/formError"
+import FieldError from "~/components/fieldError"
+
 function validateUrl(url: string) {
   const urls = ["/", "/transfers"]
   if (urls.includes(url)) {
@@ -66,8 +72,8 @@ const actionData = useActionData<typeof action>()
 const [searchParams] = useSearchParams()
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="w-full max-w-lg bg-white shadow-lg rounded-md px-16 pt-12 pb-16 mx-auto my-8 border border-slate-900/10">
+      <h1 className="text-3xl font-semibold text-slate-700 text-center pb-8">Login</h1>
       <Form method="post">
         <input
           type="hidden"
@@ -76,49 +82,38 @@ const [searchParams] = useSearchParams()
             searchParams.get("redirectTo") ?? undefined
           } 
         />
-        <div>
-          <label htmlFor="email-input">Email</label>
-          <input
-            type="text"
+        <div className="mb-5">
+          <Label text="Email:" htmlFor="email-input" />
+          <TextInput 
+            type="email"
             id="email-input"
             name="email"
             defaultValue={actionData?.fields?.email}
-            aria-invalid={Boolean(
-              actionData?.fieldErrors?.email
-            )}
-            aria-errormessage={
-              actionData?.fieldErrors?.email
-                ? "email-error" : undefined
-            }
+            invalid={Boolean(actionData?.fieldErrors?.email)}
+            errorMessage={actionData?.fieldErrors?.email ? "email-error" : undefined }
+            required={true}
+            spellCheck={false}
+            placeholder="you@example.com"
           />
-          {actionData?.fieldErrors?.email ? (
-            <p role="alert">
-              {actionData.fieldErrors.email}
-            </p>
-          ) : null}
+          <FieldError errorMessage={actionData?.fieldErrors?.email || undefined} />
         </div>
-        <div>
-          <label htmlFor="password-input">Password</label>
-          <input
+        <div className="mb-5">
+          <Label text="Password:" htmlFor="password-input" />
+          <TextInput 
             type="password"
             id="password-input"
             name="password"
             defaultValue={actionData?.fields?.password}
-            aria-invalid={Boolean(
-              actionData?.fieldErrors?.password
-            )}
-            aria-errormessage={
-              actionData?.fieldErrors?.password
-                ? "email-error" : undefined
-            }
+            invalid={Boolean(actionData?.fieldErrors?.password)}
+            errorMessage={actionData?.fieldErrors?.password ? "password-error" : undefined }
+            required={true}
+            spellCheck={false}
+            placeholder="your password"
           />
-          {actionData?.fieldErrors?.password ? (
-            <p role="alert">
-              {actionData.fieldErrors.password}
-            </p>
-          ) : null}
+          <FieldError errorMessage={actionData?.fieldErrors?.password || undefined} />
         </div>
-        <button type="submit">Login</button>
+        <FormError errorMessage={actionData?.formError || undefined} className="mb-5" />
+        <PrimaryButton text="Login" type="submit" className="w-full mt-8" />
       </Form>
     </div>
   )

@@ -6,3 +6,9 @@ node_modules
 
 # database
 prisma/simpletransfer.sqlite
+
+#finder files
+*.DS_Store
+
+#vim file
+*.swp

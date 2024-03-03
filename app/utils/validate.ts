@@ -13,6 +13,6 @@ export function validateEmail(email: string) {
 
 export function validatePassword(password: string) {
   if (password.trim().length < 6) {
-    return "Password must be at least 6 charactels long"
+    return "Password must be at least 6 characters long"
   }
 }
