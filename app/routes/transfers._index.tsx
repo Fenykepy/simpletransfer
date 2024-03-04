@@ -10,7 +10,6 @@ import TransfersList from "~/components/transfersList"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request)
-  console.log("userId:", userId)
 
   const transfers = await db.transfer.findMany({
     where: { userId: userId },

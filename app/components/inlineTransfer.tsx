@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import type { InlineTransfer } from "./transfersList"
 import { humanSize } from "~/utils/humanSize"
 import { humanDate} from "~/utils/humanDate"
-import Logo from "~/images/simpletransfer_0.2.svg"
+import Logo from "~/images/simpletransfer_logo.svg"
 
 interface InlineTransferProps {
   transfer: InlineTransfer

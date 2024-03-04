@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg53"
+   sodipodi:docname="simpletransfer_0.2.svg"
+   inkscape:version="1.2 (dc2aeda, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs57" />
+  <sodipodi:namedview
+     id="namedview55"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.3037281"
+     inkscape:cx="101.63162"
+     inkscape:cy="278.04877"
+     inkscape:window-width="2199"
+     inkscape:window-height="1261"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg53" />
+  <circle
+     style="fill:#06b6d4;fill-opacity:1;stroke-width:1.18187;stroke-linejoin:round"
+     id="path447"
+     cx="256"
+     cy="256"
+     r="248"
+     inkscape:export-filename="../../public/favicon.png"
+     inkscape:export-xdpi="12.387096"
+     inkscape:export-ydpi="12.387096" />
+  <path
+     id="rect339"
+     style="fill:#ffffff;fill-opacity:1;stroke-width:0.81078;stroke-linejoin:round"
+     d="m 249.57863,130.22146 c -10.60948,0 -19.14494,8.53547 -19.14494,19.14494 v 145.66074 l -57.7542,-60.22678 c -7.41865,-7.73774 -19.78218,-7.89758 -27.36038,-0.3194 l -8.69529,8.77477 c -7.49843,7.49842 -7.49843,19.62387 0,27.04253 l 105.77546,105.85648 c 7.49843,7.49841 19.62387,7.49841 27.04252,0 L 375.37618,270.29826 c 7.49842,-7.49843 7.49842,-19.62387 0,-27.04253 l -8.69375,-8.77477 c -7.65796,-7.57818 -20.02273,-7.41834 -27.44137,0.3194 l -57.7542,60.22678 V 149.3664 c 0,-10.60947 -8.53547,-19.14494 -19.14495,-19.14494 z" />
+</svg>
+<!--
+Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+
