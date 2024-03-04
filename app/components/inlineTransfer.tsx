@@ -15,12 +15,12 @@ export default function InlineTransfer({ transfer }: InlineTransferProps) {
   const emailString = recipients.map(recipient => recipient.email).join(", ")
   return (
     <li className={clsx(
-      "bg-white hover:bg-slate-200 mt-2 first:mt-0 rounded p-5",
+      "bg-white hover:bg-slate-200 mt-2 first:mt-0 rounded p-5 lg:mt-1 lg:p-3",
       {
         "opacity-60": active === false,
       }
     )}>
-      <Link to={id} className="flex  items-center flex-wrap lg:flex-nowrap sm:bg-orange-100 md:bg-lime-100 lg:bg-red-100">
+      <Link to={id} className="flex  items-center flex-wrap lg:flex-nowrap">
         <div className="inline-flex">
           <img width="40" height="40" src={Logo} alt="Transfer icon" />
           <div className="mx-3 truncate min-w-48">
@@ -42,9 +42,9 @@ export default function InlineTransfer({ transfer }: InlineTransferProps) {
             })}
           >{complete ? "Complete" : "Pending"}</div>
         </div>
-        <div className="flex w-full text-nowrap justify-between">
-          <div className="text-sm text-slate-500">{humanDate(createdAt)}</div>
-          <div className="text-sm text-slate-500">{humanSize(archiveSize)}</div>
+        <div className="flex w-full text-nowrap justify-between lg:flex-col lg:w-48 lg:text-right">
+          <div className="text-sm text-slate-500 lg:order-2">{humanDate(createdAt)}</div>
+          <div className="text-sm text-slate-500 lg:order-1">{humanSize(archiveSize)}</div>
         </div>
       </Link>
     </li>
