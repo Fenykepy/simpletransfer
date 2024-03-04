@@ -1,12 +1,12 @@
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
-import { Link, useLoaderData } from "@remix-run/react"
+import { useLoaderData } from "@remix-run/react"
 
 import { db } from "~/utils/db.server"
 import { requireUserId } from "~/utils/session.server"
 
 import PrimaryLink from "~/components/primaryLink"
-import InlineTransfer from "~/components/inlineTransfer"
+import TransfersList from "~/components/transfersList"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request)
@@ -42,19 +42,7 @@ export default function TransfersIndexRoute() {
         <h1 className="text-3xl font-semibold text-slate-700">Transfers</h1>
         <PrimaryLink to="new" text="New Transfer" className="mb-auto ml-auto" />
       </div>
-      <ul className="bg-slate-100 rounded-md p-2">
-        {data.transfers.map( transfer => (
-          <InlineTransfer
-            id={transfer.id}
-            createdAt={transfer.createdAt}
-            archiveSize={transfer.archiveSize}
-            object={transfer.object}
-            recipients={transfer.recipients}
-            complete={transfer.complete}
-            active={transfer.active}
-          />
-        ))}
-      </ul>
+      <TransfersList transfers={data.transfers} />
     </main>
   )
 }
