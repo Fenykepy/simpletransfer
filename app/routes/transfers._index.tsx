@@ -40,7 +40,8 @@ export default function TransfersIndexRoute() {
     <main className="w-full max-w-screen-2xl mx-auto bg-white shadow-lg rounded-md px-3 sm:px-16 pt-12 pb-8 sm:pb-16 border border-slate-900/10">
       <div className="flex items-center mb-8">
         <h1 className="text-3xl font-semibold text-slate-700">Transfers</h1>
-        <PrimaryLink to="new" text="New Transfer" className="mb-auto ml-auto" />
+        <PrimaryLink to="new" text="New Transfer" className="mb-auto ml-auto hidden md:block" />
+        <PrimaryLink to="new" text="New" className="mb-auto ml-auto md:hidden" />
       </div>
       <TransfersList transfers={data.transfers} />
     </main>
