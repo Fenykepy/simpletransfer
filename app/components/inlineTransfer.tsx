@@ -5,6 +5,8 @@ import type { InlineTransfer } from "./transfersList"
 import { humanSize } from "~/utils/humanSize"
 import { humanDate} from "~/utils/humanDate"
 import Logo from "~/images/simpletransfer_logo.svg"
+import TransferCompleteIndicator from "~/components/transferCompleteIndicator"
+import TransferActiveIndicator from "~/components/transferActiveIndicator"
 
 interface InlineTransferProps {
   transfer: InlineTransfer
@@ -28,19 +30,9 @@ export default function InlineTransfer({ transfer }: InlineTransferProps) {
             <p className="text-sm text-slate-500 truncate">{emailString}</p>
           </div>
         </div>
-        <div className="inline-flex gap-x-3 items-center mx-auto my-5 lg:ml-auto lg:mr-5 lg:my-0 text-sm *:inline-block *:rounded-full *:border *:w-32 *:px-4 *:py-1 *:text-center">
-          <div 
-            className={clsx({
-              "bg-pink-50 border-pink-100 text-pink-600": !active,
-              "bg-cyan-50 border-cyan-100 text-cyan-600": active,
-            })}
-          >{active ? "Active" : "Inactive"}</div>
-          <div
-            className={clsx({
-              "bg-green-50 border-green-100 text-green-600": complete,
-              "bg-yellow-50 border-yellow-100 text-yellow-500": complete === false,
-            })}
-          >{complete ? "Complete" : "Pending"}</div>
+        <div className="inline-flex gap-x-3 items-center mx-auto my-5 lg:ml-auto lg:mr-5 lg:my-0">
+          <TransferActiveIndicator active={active} />
+          <TransferCompleteIndicator complete={complete} />
         </div>
         <div className="flex w-full text-nowrap justify-between lg:flex-col lg:w-48 lg:text-right">
           <div className="text-sm text-slate-500 lg:order-2">{humanDate(createdAt)}</div>

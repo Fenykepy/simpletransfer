@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
-import { useLoaderData } from "@remix-run/react"
+import { useLoaderData, Link } from "@remix-run/react"
 import clsx from 'clsx'
 
 import invariant from "tiny-invariant"
@@ -11,6 +11,8 @@ import { humanSize } from "~/utils/humanSize"
 import { humanDate} from "~/utils/humanDate"
 
 import Logo from "~/images/simpletransfer_logo.svg"
+import TransferActiveIndicator from "~/components/transferActiveIndicator"
+import TransferCompleteIndicator from "~/components/transferCompleteIndicator"
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   invariant(params.transferId, "Missing transferId param")
@@ -51,30 +53,35 @@ export default function TransferRoute() {
   const data = useLoaderData<typeof loader>()
 
   return (
-    <main className="w-full max-w-screen-md mx-auto bg-white shadow-lg rounded-md px-3 sm:px-16 pt-12 pb-8 sm:pb-16 border border-slate-900/10">
-      <h1 className="text-3xl font-semibold text-slate-700 text-center mb-8">Transfer</h1>
+    <main className="w-full max-w-screen-md mx-auto bg-white shadow-lg rounded-md px-8 sm:px-16 pt-12 pb-8 sm:pb-16 border border-slate-900/10">
+      <div className="flex items-center justify-center mb-8 sm:mb-14">
+        <img width="30" height="30" src={Logo} alt="Transfer icon" />
+        <h1 className="text-3xl font-semibold text-slate-700 text-center ml-3">Transfer</h1>
+      </div>
       <article>
         <header>
-          <div className="flex border-b border-slate-900/10 flex-wrap py-2">
-            <div className="flex items-center">
-              <img width="30" height="30" src={Logo} alt="Transfer icon" />
-              <h2 className="font-bold text-slate-700 text-lg mx-2 sm:mx-3">{data.object}</h2>
+          <div className="flex border-b border-slate-900/10 flex-wrap py-2 flex-col sm:flex-row">
+            <div className="flex items-center gap-x-3 mx-auto mt-3 sm:mx-0 sm:mt-0 order-2 sm:order-1">
+              <TransferActiveIndicator active={data.active} />
+              <TransferCompleteIndicator complete={data.complete} />
             </div>
-            <div className="text-slate-500 text-sm ml-auto mr-auto sm:mr-0 flex items-center">{humanDate(data.createdAt)}</div>
+            <div className="text-slate-500 text-sm ml-auto mr-auto sm:mr-0 flex items-center order-1 sm:order-2">
+              {humanDate(data.createdAt)}
+            </div>
           </div>
           
           <div className="border-b py-3 flex items-center">
             <div>
-              <span className="font-semibold text-slate-900">File: </span>
-              <span className="text-slate-500">{data.originalName}</span>
+              <span className="font-semibold text-slate-700">File:</span>
+              <span className="text-slate-500 ml-2 truncate">{data.originalName}</span>
             </div>
             <div className="ml-auto text-sm text-slate-500">
               {humanSize(data.archiveSize)}
             </div>
           </div>
           <div className="border-b py-2">
-            <span className="font-semibold text-slate-900">To:</span>
-            <ul className="inline-block text-sm">
+            <span className="font-semibold text-slate-700">To:</span>
+            <ul className="inline-block text-sm ml-1">
               {data.recipients.map(recipient => (
                 <li 
                   className={clsx(
@@ -91,8 +98,16 @@ export default function TransferRoute() {
             </ul>
           </div>
         </header>
-        <div className="whitespace-pre-wrap py-8">{data.message}</div>
+        <h2 className="font-bold text-slate-700 text-xl mt-8">{data.object}</h2>
+        <div className="whitespace-pre-wrap mt-6 mb-8">{data.message}</div>
       </article>
+      <footer className="border-t border-slate-900/10 py-3 truncate text-slate-500">
+          <span className="font-semibold text-slate-700">Share link:</span>
+          <Link 
+            className="ml-2 text-cyan-500 text-sm underline" 
+            to={`/downloads/${data.id}`}
+          >{`/downloads/${data.id}`}</Link>
+      </footer>
     </main>
   )
 }

@@ -5,6 +5,6 @@ export function humanDate(dateString: string) {
   let d = new Date(dateString) // convert string to int
   return new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
-    timeStyle: "short",
+    //timeStyle: "short",
   }).format(d)
 }
