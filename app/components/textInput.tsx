@@ -26,7 +26,7 @@ export default function TextInput({
     spellCheck={spellCheck}
     placeholder={placeholder}
     className={clsx(
-      "mt-1 block w-full px-4 py-3 rounded-md text-sm bg-white border border-slate-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder-slate-400",
+      "mt-1 block w-full px-4 py-3 rounded-md text-sm bg-white border border-slate-300 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:italic placeholder-slate-400",
       {
         "border-red-500 focus:border-red-500 focus:ring-red-500": invalid,
       }

@@ -1,5 +1,5 @@
 export interface ButtonProps {
-  text: String
+  text: string
   type: "button" | "submit"
   onClick?: (e: React.SyntheticEvent) => void
   className?: string
