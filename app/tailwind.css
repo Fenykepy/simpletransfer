@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .card {
+        @apply bg-white rounded-md border border-slate-900/10;
+        box-shadow: 0 0 15px rgb(0 0 0 / 0.1), 0 0 6px rgb(0 0 0 / 0.1);
+    }
+}

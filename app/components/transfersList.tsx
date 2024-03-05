@@ -1,5 +1,5 @@
 
-import InlineTransfer from "~/components/inlineTransfer"
+import TransferInline from "~/components/transferInline"
 
 interface RecipientEmail {
   email: string
@@ -21,9 +21,9 @@ interface TransfersListProps {
 
 export default function TransfersList({ transfers }: TransfersListProps) {
   return (
-    <ul className="bg-slate-100 rounded-md p-2">
+    <ul className="card">
       {transfers.map(transfer => (
-        <InlineTransfer key={transfer.id} transfer={transfer} />
+        <TransferInline key={transfer.id} transfer={transfer} />
       ))}
     </ul>
   )
