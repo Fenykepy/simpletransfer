@@ -1,6 +1,10 @@
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
-import { useLoaderData } from "@remix-run/react"
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+ } from "@remix-run/react"
 
 import invariant from "tiny-invariant"
 
@@ -81,13 +85,31 @@ export default function DownloadRoute() {
         />
         
         <footer className="flex mt-5">
-          {/*<PrimaryLink 
-            text="Download"
-            to={`/stream/${data.id}`}
-            className="mx-auto min-w-52"
-  />*/}
           <DownloadLink to={`/stream/${data.id}`} className="mx-auto min-w-52" />
         </footer>
+      </article>
+    </MessageSection>
+  )
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+  console.error(error)
+  let message = "Sorry, an unexpected error occured…"
+
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 403) {
+      message = "Sorry, this transfer has expired…"
+    }
+    if (error.status === 404) {
+      message = "Sorry, this transfer cannot be found…"
+    }
+  }
+
+  return (
+    <MessageSection title="Transfer">
+      <article className="text-slate-700">
+        {message}
       </article>
     </MessageSection>
   )

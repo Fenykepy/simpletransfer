@@ -1,14 +1,17 @@
 import type { LinksFunction } from "@remix-run/node"
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError,
 } from "@remix-run/react"
 
 import styles from "./tailwind.css?url"
 import MainHeader from "~/components/mainHeader"
+import MessageSection from "./components/messageSection"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -41,3 +44,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return <Outlet />
 }
+
+
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+  console.error(error)
+  let message = "Sorry, an unexpected error occured…"
+
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 400) {
+      message = "Sorry, you're not allowed to do that…"
+    }
+    if (error.status === 403) {
+      message = "Are you sure this is yours?"
+    }
+    if (error.status === 404) {
+      message = "What the heck? this page cannot be found…"
+    }
+  }
+
+  return (
+    <MessageSection title="Oups…">
+      <article className="text-slate-700">
+        {message}
+      </article>
+    </MessageSection>
+  )
+}
+
+
