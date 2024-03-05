@@ -5,13 +5,13 @@ import { useLoaderData } from "@remix-run/react"
 import invariant from "tiny-invariant"
 
 import { db } from "~/utils/db.server"
-import { humanDate} from "~/utils/humanDate"
 
 import MessageSection from "~/components/messageSection"
 import EmailChip from "~/components/emailChip"
 import TransferFileField from "~/components/transferFileField"
 import TransferObjectMessageField from "~/components/transferObjectMessageField"
 import PrimaryLink from "~/components/primaryLink"
+import DownloadLink from "~/components/downloadLink"
 
 // Public Endpoint
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -43,6 +43,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     }
   })
   if (!transfer) {
+    console.log("no transfer")
     throw new Response("Transfer not found…", { status: 404 })
   }
   if (!transfer.active || (recipient && !recipient.active)) {
@@ -80,11 +81,12 @@ export default function DownloadRoute() {
         />
         
         <footer className="flex mt-5">
-          <PrimaryLink 
+          {/*<PrimaryLink 
             text="Download"
             to={`/stream/${data.id}`}
             className="mx-auto min-w-52"
-          />
+  />*/}
+          <DownloadLink to={`/stream/${data.id}`} className="mx-auto min-w-52" />
         </footer>
       </article>
     </MessageSection>

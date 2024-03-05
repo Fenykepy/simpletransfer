@@ -23,7 +23,7 @@ export default function TransferInline({ transfer }: InlineTransferProps) {
       }
     )}>
       <Link to={id}>
-        <div className="flex items-center flex-wrap lg:flex-nowrap ml-5 sm:ml-8 pr-5 sm:pr-8 py-5 border-b border-slate-900/10i group-last:border-none">
+        <div className="flex items-center flex-wrap lg:flex-nowrap mx-5 sm:mx-8 py-5 border-b border-slate-900/10i group-last:border-none">
           <div className="inline-flex">
             <img width="40" height="40" src={Logo} alt="Transfer icon" />
             <div className="mx-3 truncate min-w-48">
