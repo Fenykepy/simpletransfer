@@ -9,7 +9,7 @@ export default function TransferCompleteIndicator({ complete }: { complete: bool
         "bg-green-50 border-green-100 text-green-600": complete,
       },
     )}>
-      {complete ? "Complete" : "Pending…"}
+      {complete ? "Complete" : "Pending"}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 export function validateEmail(email: string) {
   if (email.trim().length === 0) {
-    return "Empty email"
+    return "Email is required"
   }
   if (email.length > 255) {
     return `Email too long: "${email}"`

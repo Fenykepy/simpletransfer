@@ -4,6 +4,8 @@ import type {
 } from "@remix-run/node"
 import { json, redirect } from "@remix-run/node"
 import {
+  Form,
+  useActionData,
   useLoaderData,
 } from "@remix-run/react"
 
@@ -37,7 +39,7 @@ export const loader = async({ request }: LoaderFunctionArgs) => {
 
 async function validateFile(file: string) {
   if (file.trim().length === 0) {
-    return "Invalid filename"
+    return "File is required"
   }
   // Ensure file is in dropbox
   if (! await isDropboxEntry(file)) {
@@ -47,15 +49,14 @@ async function validateFile(file: string) {
 
 function validateObject(object: string) {
   if (object.trim().length === 0) {
-    return "Object must be set"
+    return "Object is required"
   }
 }
 
 function validateMessage(message: string) {
   if (message.trim().length === 0) {
-    return "Message must be set"
+    return "Message is required"
   }
-
 }
 
 function parseRecipientsString(recipientsString: string) {
@@ -93,11 +94,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const [ toEmails, toErrors ] = parseRecipientsString(to)
   if (toErrors.length === 0 && toEmails.length === 0) {
     // We must at least have one valid email
-    toErrors.push("This field must be set")
+    toErrors.push("Email is required")
   }
 
   const fieldErrors = {
-    to: toErrors.length > 0 ? toErrors : undefined,
+    to: toErrors.length > 0 ? toErrors.join(", ") : undefined,
     file: await validateFile(file),
     object: validateObject(object),
     message: validateMessage(message),
@@ -118,22 +119,27 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function NewTransferRoute() {
   const data = useLoaderData<typeof loader>()
+  const actionData = useActionData<typeof action>()
 
   return (
     <MessageSection title="New Transfer">
-      <form method="post">
+      <Form method="post">
         <div className="border-b border-slate-900/10 py-2">
-          <label className="flex">
+          <label className="flex text-slate-700">
             {/* coma separated list of emails */}
-            <span className="font-semibold text-slate-700 mr-1">To: </span>
+            <span className="font-semibold mr-1">To: </span>
             <input 
-              className="outline-none text-slate-700 grow placeholder:italic placeholder-slate-400 truncate"
+              className="outline-none grow placeholder:italic placeholder-slate-400 truncate"
               type="text"
               name="to"
               placeholder="tom@example.com, tina@example.com"
+              spellCheck={false}
+              aria-invalid={Boolean(actionData?.fields?.to)}
+              aria-errorMessage={actionData?.fieldErrors?.to ? "to-error" : undefined}
+              defaultValue={actionData?.fields?.to}
             />
           </label>
-          <FieldError errorMessage="" />
+          <FieldError errorMessage={actionData?.fieldErrors?.to} />
         </div>
         <div className="border-b border-slate-900/10 py-2">
           <span className="font-semibold text-slate-700 mr-1">From:</span>
@@ -142,7 +148,12 @@ export default function NewTransferRoute() {
         <div className="border-b border-slate-900/10 py-3">
           <label className="flex items-center text-slate-700">
             <span className="font-semibold mr-1">File: </span>
-            <select name="file" className="outline-none bg-white py-0 grow min-w-0 truncate">
+            <select
+              name="file"
+              className="outline-none bg-white py-0 grow min-w-0 truncate"
+              aria-invalid={Boolean(actionData?.fields?.file)}
+              aria-errorMessage={actionData?.fieldErrors?.file ? "file-error" : undefined}
+            >
               <option value=""></option>
               {data.dropboxContent.map( contentItem =>
                 <option
@@ -151,34 +162,42 @@ export default function NewTransferRoute() {
               )}
             </select>
           </label>
-          <FieldError errorMessage="" />
+          <FieldError errorMessage={actionData?.fieldErrors?.file} />
         </div>
         <div className="border-b border-slate-900/10 py-3">
-          <label className="flex">
-            <span className="font-semibold text-slate-700 mr-1">Object: </span>
+          <label className="flex text-slate-700">
+            <span className="font-semibold mr-1">Object: </span>
             <input
-              className="outline-none text-slate-700 grow"
+              className="outline-none grow"
               type="text"
               name="object" 
+              aria-invalid={Boolean(actionData?.fields?.object)}
+              aria-errorMessage={actionData?.fieldErrors?.object ? "object-error" : undefined}
             />
           </label>
-          <FieldError errorMessage="This field is required" />
+          <FieldError errorMessage={actionData?.fieldErrors?.object} />
         </div>
         <div className="border-b border-slate-900/10">
           <textarea 
             className="w-full outline-none text-slate-700 py-4"
             name="message"
             rows={12}
+            aria-invalid={Boolean(actionData?.fields?.message)}
+            aria-errorMessage={actionData?.fieldErrors?.message ? "message-error" : undefined}
           />
           <FieldError
-            errorMessage="This field is required"
+            errorMessage={actionData?.fieldErrors?.message}
             className="mb-3"
           />
         </div>
+        <FieldError
+          errorMessage={actionData?.formError || undefined }
+          className="mt-3"
+        />
         <div className="flex mt-5">
-          <PrimaryButton text="Send" type="submit" className="mx-auto sm:mr-0 min-w-32" />
+          <PrimaryButton text="Send" type="submit" className="mx-auto min-w-52" />
         </div>
-      </form>
+      </Form>
     </MessageSection>
   )
 }
