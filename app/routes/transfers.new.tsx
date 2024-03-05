@@ -4,34 +4,45 @@ import type {
 } from "@remix-run/node"
 import { json, redirect } from "@remix-run/node"
 import {
-  useActionData,
-  useNavigation,
+  useLoaderData,
 } from "@remix-run/react"
 
 import { db } from "~/utils/db.server"
+import { isDropboxEntry, listDropbox } from "~/utils/filesystem.server"
+import { requireUserId } from "~/utils/session.server"
 import { badRequest } from "~/utils/request.server"
 import {
   validateEmail,
 } from "~/utils/validate"
 
+import MessageSection from "~/components/messageSection"
+import EmailChip from "~/components/emailChip"
+import FieldError from "~/components/fieldError"
+import PrimaryButton from "~/components/primaryButton"
+
+
 export const loader = async({ request }: LoaderFunctionArgs) => {
-  /* TODO handle authentication
-  const userId = await getUserId(request)
-  if (!userId) {
-    throw new Response("Unauthorized", { status: 401 })
-  }
-  */
+  const userId = await requireUserId(request)
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: {
+      email: true,
+      signature: true,
+    }
+  })
+  const dropboxContent = await listDropbox()
 
-  // TODO scan dropbox folder's content
-
-  return json({ })
+  return json({ user, dropboxContent })
 }
 
-function validateFile(file: string) {
+async function validateFile(file: string) {
   if (file.trim().length === 0) {
     return "Invalid filename"
   }
-  // TODO ensure file is in dropbox
+  // Ensure file is in dropbox
+  if (! await isDropboxEntry(file)) {
+    return "File not found in dropbox directory"
+  }
 }
 
 function validateObject(object: string) {
@@ -87,7 +98,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const fieldErrors = {
     to: toErrors.length > 0 ? toErrors : undefined,
-    file: validateFile(file),
+    file: await validateFile(file),
     object: validateObject(object),
     message: validateMessage(message),
   }
@@ -106,35 +117,68 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 export default function NewTransferRoute() {
+  const data = useLoaderData<typeof loader>()
+
   return (
-    <div>
-      <h2>New Transfer</h2>
+    <MessageSection title="New Transfer">
       <form method="post">
-        <div>
-          <label>
+        <div className="border-b border-slate-900/10 py-2">
+          <label className="flex">
             {/* coma separated list of emails */}
-            To: <input type="text" name="to" />
+            <span className="font-semibold text-slate-700 mr-1">To: </span>
+            <input 
+              className="outline-none text-slate-700 grow placeholder:italic placeholder-slate-400 truncate"
+              type="text"
+              name="to"
+              placeholder="tom@example.com, tina@example.com"
+            />
           </label>
+          <FieldError errorMessage="" />
         </div>
-        <div>
-          <label>
-            File: <input type="text" name="file" />
+        <div className="border-b border-slate-900/10 py-2">
+          <span className="font-semibold text-slate-700 mr-1">From:</span>
+          <EmailChip email={data.user?.email || ""} />
+        </div>
+        <div className="border-b border-slate-900/10 py-3">
+          <label className="flex items-center text-slate-700">
+            <span className="font-semibold mr-1">File: </span>
+            <select name="file" className="outline-none bg-white py-0 grow min-w-0 truncate">
+              <option value=""></option>
+              {data.dropboxContent.map( contentItem =>
+                <option
+                  key={contentItem.name}
+                >{contentItem.name}</option>
+              )}
+            </select>
           </label>
+          <FieldError errorMessage="" />
         </div>
-        <div>
-          <label>
-            Object: <input type="text" name="object" />
+        <div className="border-b border-slate-900/10 py-3">
+          <label className="flex">
+            <span className="font-semibold text-slate-700 mr-1">Object: </span>
+            <input
+              className="outline-none text-slate-700 grow"
+              type="text"
+              name="object" 
+            />
           </label>
+          <FieldError errorMessage="This field is required" />
         </div>
-        <div>
-          <label>
-            Message: <textarea name="message" />
-          </label>
+        <div className="border-b border-slate-900/10">
+          <textarea 
+            className="w-full outline-none text-slate-700 py-4"
+            name="message"
+            rows={12}
+          />
+          <FieldError
+            errorMessage="This field is required"
+            className="mb-3"
+          />
         </div>
-        <div>
-          <button type="submit">Send</button>
+        <div className="flex mt-5">
+          <PrimaryButton text="Send" type="submit" className="mx-auto sm:mr-0 min-w-32" />
         </div>
       </form>
-    </div>
+    </MessageSection>
   )
 }

@@ -3,6 +3,7 @@ import { installGlobals } from "@remix-run/node";
 import compression from "compression";
 import express from "express";
 import morgan from "morgan";
+import fs from "fs";
 
 installGlobals();
 
@@ -48,7 +49,47 @@ app.use(morgan("tiny"));
 // handle SSR requests
 app.all("*", remixHandler);
 
-const port = process.env.PORT || 3000;
-app.listen(port, () =>
-  console.log(`Express server listening at http://localhost:${port}`)
-);
+
+
+
+const PORT = process.env.PORT || 3000;
+
+function resetSocket(sock) {
+  /*
+   * We first delete socket if file exists,
+   * as it's not automatically done at shutdown,
+   * else it throws a error
+   */
+  try {
+    if (fs.existsSync(sock)) {
+      console.log("Socket file exists, delete it.")
+      fs.unlinkSync(sock)
+    }
+  } catch (e) {
+    console.log('failed to reset socket.')
+    throw e
+  }
+}
+
+if (typeof PORT === "string") {
+  /*
+   * If we use a socket, first delete file if
+   * it exists
+   */
+  resetSocket(PORT)
+}
+
+app.listen(PORT, (error) => {
+  if (error) {
+    console.log(error)
+  } else {
+    // we give rights to socket else nginx can't use it
+    // ParseInt PORT because it's always a string when it comes from .env
+    if (isNaN(parseInt(PORT)) && fs.lstatSync(PORT).isSocket()) {
+      console.log('change socket mode')
+      fs.chmodSync(PORT, '777');
+    }
+
+    console.log(`Express server listening at http://localhost:${PORT}`)
+  }
+})

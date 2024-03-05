@@ -24,8 +24,10 @@ TRANSFERS_DIRECTORY='/var/www/simpletransfer/transfers'
 # Must be a full path to the directory and directory must exists (it won't be created).
 # (without trailing '/')
 DROPBOX_DIRECTORY='/var/www/simpletransfer/dropbox'
-# sqlite data base file (full path, file will be created).
-DB_FILE='/var/www/simpletransfer/db/simpleTransfer.sqlite'
+# sqlite data base file
+DATABASE_URL="file:./simpletransfer.sqlite"
+# Session secret, change for a random string before deployment
+SESSION_SECRET="my_secret"
 
 
 

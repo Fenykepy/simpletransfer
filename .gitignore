@@ -7,6 +7,10 @@ node_modules
 # database
 prisma/simpletransfer.sqlite
 
+# transfers and dropbox
+transfers
+dropbox
+
 #finder files
 *.DS_Store
 

@@ -9,6 +9,7 @@ import PrimaryLink from "~/components/primaryLink"
 import TransfersList from "~/components/transfersList"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  console.log('test transfers index')
   const userId = await requireUserId(request)
 
   const transfers = await db.transfer.findMany({

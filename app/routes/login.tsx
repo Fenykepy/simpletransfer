@@ -94,7 +94,10 @@ export default function Login() {
             spellCheck={false}
             placeholder="you@example.com"
           />
-          <FieldError errorMessage={actionData?.fieldErrors?.email || undefined} />
+          <FieldError
+            errorMessage={actionData?.fieldErrors?.email || undefined}
+            className="pl-2"
+          />
         </div>
         <div className="mb-5">
           <Label text="Password:" htmlFor="password-input" />
@@ -109,7 +112,10 @@ export default function Login() {
             spellCheck={false}
             placeholder="your password"
           />
-          <FieldError errorMessage={actionData?.fieldErrors?.password || undefined} />
+          <FieldError 
+            errorMessage={actionData?.fieldErrors?.password || undefined}
+            className="pl-2"
+          />
         </div>
         <FormError errorMessage={actionData?.formError || undefined} className="mb-5" />
         <PrimaryButton text="Login" type="submit" className="w-full mt-8" />
