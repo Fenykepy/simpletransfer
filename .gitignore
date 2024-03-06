@@ -9,6 +9,7 @@ prisma/simpletransfer.sqlite
 
 # transfers and dropbox
 transfers
+transfersData
 dropbox
 
 #finder files

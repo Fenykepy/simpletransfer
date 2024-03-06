@@ -4,6 +4,7 @@ import compression from "compression";
 import express from "express";
 import morgan from "morgan";
 import fs from "fs";
+import fsp from "node:fs/promises"
 
 installGlobals();
 
@@ -49,6 +50,35 @@ app.use(morgan("tiny"));
 // handle SSR requests
 app.all("*", remixHandler);
 
+
+async function createWorkingDirectory(path, name) {
+  let stats
+  try {
+    stats = await fsp.stat(path)
+  } catch {
+    stats = false // doesn't exists
+  }
+  if (stats && !stats.isDirectory()) {
+    throw new Error(`"${name}" environment variable must be a directory`)
+  } else if (!stats) { // directory doesn't exist, create it
+    await fsp.mkdir(path, { recursive: true })
+  }
+}
+
+async function checkWorkingDirectories() {
+  const transfersDirectory = process.env.TRANSFERS_DIRECTORY
+  if (! transfersDirectory) {
+    throw new Error("\"TRANSFERS_DIRECTORY\" environment variable must be set")
+  }
+  createWorkingDirectory(transfersDirectory, "TRANSFERS_DIRECTORY")
+
+  const dropboxDirectory = process.env.DROPBOX_DIRECTORY
+  if (! dropboxDirectory) {
+    throw new Error("\"DROPBOX_DIRECTORY\" environment variable must be set")
+  }
+  createWorkingDirectory(dropboxDirectory, "DROPBOX_DIRECTORY")
+}
+await checkWorkingDirectories()
 
 
 

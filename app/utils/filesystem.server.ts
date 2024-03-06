@@ -1,7 +1,10 @@
 import fs from "node:fs/promises"
 import path from "path"
+import { v4 as uuidv4 } from "uuid" 
+import AdmZip from "adm-zip"
 
 const dropboxPath = process.env.DROPBOX_DIRECTORY || ""
+const transfersDirectoryPath = process.env.TRANSFERS_DIRECTORY || ""
 
 
 // returns true if a file exists at type, any type (file, directory, sym link...)
@@ -65,4 +68,34 @@ export async function listDropbox(): Promise<DropboxEntry[]> {
     }
   }
   return results
+}
+
+interface CreateArchiveResult {
+  date: Date
+  uuid: string
+  size: number
+  name: string
+}
+
+export async function createArchive(dropboxFileName: string): Promise<CreateArchiveResult> {
+  // We don't catch because we want a server error if creation archive fails
+  const date = new Date()
+  const uuid = uuidv4()
+  const zipName = `${date.toISOString()}_${uuid}.zip`
+  const zipPath = path.join(transfersDirectoryPath, zipName)
+  const dropboxFilePath = path.join(dropboxPath, dropboxFileName)
+  const stats = await fs.stat(dropboxFilePath)
+
+  // Zip file and move it to transfers directory
+  let zip = new AdmZip()
+  if (stats.isFile()) {
+    zip.addLocalFile(dropboxFilePath)
+  } else if (stats.isDirectory()) {
+    zip.addLocalFolder(dropboxFilePath)
+  }
+  zip.writeZip(zipPath)
+
+  const zipStats = await fs.stat(zipPath)
+
+  return { date, uuid, size: zipStats.size, name: zipName }
 }

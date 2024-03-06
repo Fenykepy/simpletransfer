@@ -10,7 +10,11 @@ import {
 } from "@remix-run/react"
 
 import { db } from "~/utils/db.server"
-import { isDropboxEntry, listDropbox } from "~/utils/filesystem.server"
+import {
+  isDropboxEntry,
+  listDropbox,
+  createArchive,
+} from "~/utils/filesystem.server"
 import { requireUserId } from "~/utils/session.server"
 import { badRequest } from "~/utils/request.server"
 import {
@@ -77,6 +81,7 @@ function parseRecipientsString(recipientsString: string) {
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  const userId = await requireUserId(request)
   const form = await request.formData()
   const to = form.get("to")
   const file = form.get("file")
@@ -112,8 +117,35 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     })
   }
 
-  // TODO create transfer and recipients
-  let transfer = { id: "test" }
+  // All is good, create archive
+  const originalName = file.trim()
+  const archiveData = await createArchive(originalName)
+
+  // Create transfer
+  let transfer = await db.transfer.create({
+    data: {
+      id: archiveData.uuid,
+      createdAt: archiveData.date,
+      originalName: originalName,
+      archiveName: archiveData.name,
+      archiveSize: archiveData.size,
+      object: object.trim(),
+      message: message.trim(),
+      userId: userId,
+    }
+  })
+
+  // Create recipients
+  await Promise.all(
+    toEmails.map(email => {
+      return db.recipient.create({
+        data: { email, transferId: transfer.id }
+      })
+    })
+  )
+  
+  // TODO send emails
+
   return redirect(`/transfers/${transfer.id}`)
 }
 
@@ -135,7 +167,7 @@ export default function NewTransferRoute() {
               placeholder="tom@example.com, tina@example.com"
               spellCheck={false}
               aria-invalid={Boolean(actionData?.fields?.to)}
-              aria-errorMessage={actionData?.fieldErrors?.to ? "to-error" : undefined}
+              aria-errormessage={actionData?.fieldErrors?.to ? "to-error" : undefined}
               defaultValue={actionData?.fields?.to}
             />
           </label>
@@ -150,9 +182,9 @@ export default function NewTransferRoute() {
             <span className="font-semibold mr-1">File: </span>
             <select
               name="file"
-              className="outline-none bg-white py-0 grow min-w-0 truncate"
+              className="outline-none bg-white py-0 grow min-w-0 appearance-none truncate"
               aria-invalid={Boolean(actionData?.fields?.file)}
-              aria-errorMessage={actionData?.fieldErrors?.file ? "file-error" : undefined}
+              aria-errormessage={actionData?.fieldErrors?.file ? "file-error" : undefined}
             >
               <option value=""></option>
               {data.dropboxContent.map( contentItem =>
@@ -172,7 +204,7 @@ export default function NewTransferRoute() {
               type="text"
               name="object" 
               aria-invalid={Boolean(actionData?.fields?.object)}
-              aria-errorMessage={actionData?.fieldErrors?.object ? "object-error" : undefined}
+              aria-errormessage={actionData?.fieldErrors?.object ? "object-error" : undefined}
             />
           </label>
           <FieldError errorMessage={actionData?.fieldErrors?.object} />
@@ -183,7 +215,7 @@ export default function NewTransferRoute() {
             name="message"
             rows={12}
             aria-invalid={Boolean(actionData?.fields?.message)}
-            aria-errorMessage={actionData?.fieldErrors?.message ? "message-error" : undefined}
+            aria-errormessage={actionData?.fieldErrors?.message ? "message-error" : undefined}
           />
           <FieldError
             errorMessage={actionData?.fieldErrors?.message}
