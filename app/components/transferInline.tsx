@@ -12,7 +12,7 @@ interface InlineTransferProps {
 }
 
 export default function TransferInline({ transfer }: InlineTransferProps) {
-  const { id, createdAt, archiveSize, object, complete, active, recipients} = transfer
+  const { id, createdAt, archiveSize, subject, complete, active, recipients} = transfer
   const emailString = recipients.map(recipient => recipient.email).join(", ")
   const opacity = active ? "" : " opacity-50"
   return (
@@ -22,7 +22,7 @@ export default function TransferInline({ transfer }: InlineTransferProps) {
           <div className={"inline-flex" + opacity}>
             <img width="40" height="40" src={Logo} alt="Transfer icon" />
             <div className="mx-3 truncate min-w-48">
-              <p className="text-base font-medium text-slate-900 truncate">{object}</p>
+              <p className="text-base font-medium text-slate-900 truncate">{subject}</p>
               <p className="text-sm text-slate-500 truncate">{emailString}</p>
             </div>
           </div>

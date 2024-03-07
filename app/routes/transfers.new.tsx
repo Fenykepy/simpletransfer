@@ -51,9 +51,9 @@ async function validateFile(file: string) {
   }
 }
 
-function validateObject(object: string) {
-  if (object.trim().length === 0) {
-    return "Object is required"
+function validateSubject(subject: string) {
+  if (subject.trim().length === 0) {
+    return "Subject is required"
   }
 }
 
@@ -85,11 +85,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData()
   const to = form.get("to")
   const file = form.get("file")
-  const object = form.get("object")
+  const subject = form.get("subject")
   const message = form.get("message")
 
   if (typeof to !== "string" || typeof file !== "string" ||
-      typeof object !== "string" || typeof message !== "string") {
+      typeof subject !== "string" || typeof message !== "string") {
     return badRequest({
       fieldErrors: null,
       fields: null,
@@ -105,10 +105,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const fieldErrors = {
     to: toErrors.length > 0 ? toErrors.join(", ") : undefined,
     file: await validateFile(file),
-    object: validateObject(object),
+    subject: validateSubject(subject),
     message: validateMessage(message),
   }
-  const fields = { to, file, object, message }
+  const fields = { to, file, subject, message }
   if (Object.values(fieldErrors).some(Boolean)) {
     return badRequest({
       fieldErrors,
@@ -129,7 +129,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       originalName: originalName,
       archiveName: archiveData.name,
       archiveSize: archiveData.size,
-      object: object.trim(),
+      subject: subject.trim(),
       message: message.trim(),
       userId: userId,
     }
@@ -198,16 +198,16 @@ export default function NewTransferRoute() {
         </div>
         <div className="border-b border-slate-900/10 py-3">
           <label className="flex text-slate-700">
-            <span className="font-semibold mr-1">Object: </span>
+            <span className="font-semibold mr-1">Subject: </span>
             <input
               className="outline-none grow"
               type="text"
-              name="object" 
-              aria-invalid={Boolean(actionData?.fields?.object)}
-              aria-errormessage={actionData?.fieldErrors?.object ? "object-error" : undefined}
+              name="subject" 
+              aria-invalid={Boolean(actionData?.fields?.subject)}
+              aria-errormessage={actionData?.fieldErrors?.subject ? "subject-error" : undefined}
             />
           </label>
-          <FieldError errorMessage={actionData?.fieldErrors?.object} />
+          <FieldError errorMessage={actionData?.fieldErrors?.subject} />
         </div>
         <div className="border-b border-slate-900/10">
           <textarea 

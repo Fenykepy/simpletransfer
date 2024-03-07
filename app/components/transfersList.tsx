@@ -8,7 +8,7 @@ interface RecipientEmail {
 export interface InlineTransfer {
   id: string
   createdAt: string
-  object: string
+  subject: string
   archiveSize: number
   recipients: Array<RecipientEmail>
   complete: boolean

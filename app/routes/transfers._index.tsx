@@ -19,7 +19,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       id: true,
       createdAt: true,
       archiveSize: true,
-      object: true,
+      subject: true,
       complete: true,
       active: true,
       recipients: {

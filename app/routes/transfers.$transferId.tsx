@@ -10,7 +10,7 @@ import { requireUserId } from "~/utils/session.server"
 import MessageSection from "~/components/messageSection"
 import EmailChip from "~/components/emailChip"
 import TransferFileField from "~/components/transferFileField"
-import TransferObjectMessageField from "~/components/transferObjectMessageField"
+import TransferSubjectMessageField from "~/components/transferSubjectMessageField"
 import TransferActiveIndicator from "~/components/transferActiveIndicator"
 import TransferCompleteIndicator from "~/components/transferCompleteIndicator"
 
@@ -26,7 +26,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       archiveSize: true,
       archiveName: true,
       originalName: true,
-      object: true,
+      subject: true,
       message: true,
       complete: true,
       active: true,
@@ -83,8 +83,8 @@ export default function TransferRoute() {
 
         </header>
         
-        <TransferObjectMessageField 
-          object={data.object}
+        <TransferSubjectMessageField 
+          subject={data.subject}
           message={data.message}
         />
 

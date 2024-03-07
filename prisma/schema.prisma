@@ -30,7 +30,7 @@ model Transfer {
   originalName   String
   archiveName    String
   archiveSize    Int
-  object         String
+  subject         String
   message        String
   downloadDates  String     @default("[]")
   complete       Boolean    @default(false)

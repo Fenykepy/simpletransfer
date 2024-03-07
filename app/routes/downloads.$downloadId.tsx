@@ -13,8 +13,7 @@ import { db } from "~/utils/db.server"
 import MessageSection from "~/components/messageSection"
 import EmailChip from "~/components/emailChip"
 import TransferFileField from "~/components/transferFileField"
-import TransferObjectMessageField from "~/components/transferObjectMessageField"
-import PrimaryLink from "~/components/primaryLink"
+import TransferSubjectMessageField from "~/components/transferSubjectMessageField"
 import DownloadLink from "~/components/downloadLink"
 
 // Public Endpoint
@@ -36,7 +35,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       createdAt: true,
       archiveSize: true,
       originalName: true,
-      object: true,
+      subject: true,
       message: true,
       active: true,
       user: {
@@ -47,7 +46,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     }
   })
   if (!transfer) {
-    console.log("no transfer")
     throw new Response("Transfer not found…", { status: 404 })
   }
   if (!transfer.active || (recipient && !recipient.active)) {
@@ -79,8 +77,8 @@ export default function DownloadRoute() {
           />
         </header>
         
-        <TransferObjectMessageField 
-          object={data.transfer.object}
+        <TransferSubjectMessageField 
+          subject={data.transfer.subject}
           message={data.transfer.message}
         />
         
