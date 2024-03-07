@@ -1,4 +1,5 @@
 import fs from "node:fs/promises"
+import { createReadStream } from "node:fs"
 import path from "path"
 import { v4 as uuidv4 } from "uuid" 
 import AdmZip from "adm-zip"
@@ -81,7 +82,8 @@ export async function createArchive(dropboxFileName: string): Promise<CreateArch
   // We don't catch because we want a server error if creation archive fails
   const date = new Date()
   const uuid = uuidv4()
-  const zipName = `${date.toISOString()}_${uuid}.zip`
+  // We use date in filename so it's easyer to sort them in an external access
+  const zipName = `${date.toISOString().replaceAll(":", ".")}_${uuid}.zip`
   const zipPath = path.join(transfersDirectoryPath, zipName)
   const dropboxFilePath = path.join(dropboxPath, dropboxFileName)
   const stats = await fs.stat(dropboxFilePath)
@@ -98,4 +100,13 @@ export async function createArchive(dropboxFileName: string): Promise<CreateArch
   const zipStats = await fs.stat(zipPath)
 
   return { date, uuid, size: zipStats.size, name: zipName }
+}
+
+export async function streamArchive(zipName: string) {
+  const zipPath = path.join(transfersDirectoryPath, zipName)
+  if (!await isFile(zipPath)) {
+    throw new Error("Transfer file not found")
+  }
+  
+  return createReadStream(zipPath)
 }

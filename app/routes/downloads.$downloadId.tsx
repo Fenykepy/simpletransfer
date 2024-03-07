@@ -55,7 +55,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   }
 
   // TODO if we have user templates, we return html template
-  return json({ id: params.id, transfer, recipient })
+  return json({ id: params.downloadId, transfer, recipient })
 }
 
 // Public (with known recipient or transfer id) transfer detail

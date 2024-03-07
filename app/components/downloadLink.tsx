@@ -9,6 +9,7 @@ interface DownloadLinkProps {
 export default function DownloadLink({ to, className}: DownloadLinkProps) {
   return (
     <Link
+      reloadDocument
       to={to}
       className={"flex text-sm justify-center items-center font-semibold rounded-md bg-cyan-500 hover:bg-cyan-600 text-white px-6" + " " + className}
     >
