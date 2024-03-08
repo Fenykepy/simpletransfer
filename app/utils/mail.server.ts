@@ -3,6 +3,7 @@ import nodemailer from "nodemailer"
 import { db } from "./db.server"
 import { humanSize } from "./humanSize"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
+import { Recipient, Transfer } from "@prisma/client"
 
 let subject_prefix = process.env.MAIL_SUBJECT_PREFIX || ""
 let mailConfig: any
@@ -53,7 +54,7 @@ function sendMail({ to, subject, text, replyTo }: SendMailParams) {
 }
 
 
-interface RecipientEmailParams {
+interface RecipientNewTransferEmailParams {
   senderEmail: string,
   recipientEmail: string,
   downloadId: string,
@@ -65,12 +66,12 @@ interface RecipientEmailParams {
 }
 
 // Send email to recipient on success new transfer
-function sendRecipientNewTransferEmail(params: RecipientEmailParams) {
+function sendRecipientNewTransferEmail(params: RecipientNewTransferEmailParams) {
   const subject = `"${params.senderEmail}" sent you "${params.subject}"`
   const text = `${subject}
 
   File: ${params.originalName}, ${humanSize(params.archiveSize)}
-
+  Message:
   ${params.message}
 
   Download link:
@@ -79,11 +80,11 @@ function sendRecipientNewTransferEmail(params: RecipientEmailParams) {
   return sendMail({ to: params.recipientEmail, subject, text, replyTo: params.senderEmail })
 }
 
-interface SenderEmailParams {
+interface SenderNewTransferEmailParams {
   senderEmail: string,
   successEmails: Array<string>,
   errorEmails: Array<string>,
-  downloadId: string,
+  transferId: string,
   origin: string,
   subject: string,
   message: string,
@@ -92,7 +93,7 @@ interface SenderEmailParams {
 }
 
 // Send email to user on success new transfer
-async function sendSenderNewTransferEmail(params: SenderEmailParams) {
+async function sendSenderNewTransferEmail(params: SenderNewTransferEmailParams) {
   const errors = params.errorEmails.length > 0
   const subject = `"${params.subject}" ${errors ? "sent with errors..." : "successfully sent!"}`
   const text = `${subject}
@@ -100,10 +101,14 @@ async function sendSenderNewTransferEmail(params: SenderEmailParams) {
   To: ${params.successEmails.join(", ")}${errors ? `\nErrors: ${params.errorEmails.join(", ")}` : ""}
   File: ${params.originalName}, ${humanSize(params.archiveSize)}
 
+  Message:
   ${params.message}
 
+  View transfer:
+  ${params.origin}/transfers/${params.transferId}
+
   Share link:
-  ${params.origin}/downloads/${params.downloadId}
+  ${params.origin}/downloads/${params.transferId}
   `
 
   return sendMail({ to: params.senderEmail, subject, text })
@@ -153,7 +158,7 @@ export async function sendNewTransferEmails(transferId: string, origin: string) 
     senderEmail: transfer.user.email,
     successEmails,
     errorEmails,
-    downloadId: transferId,
+    transferId,
     origin,
     subject: transfer.subject,
     message: transfer.message,
@@ -163,11 +168,37 @@ export async function sendNewTransferEmails(transferId: string, origin: string) 
 }
 
 
-// Send email to user on success recipient download
-export async function sendSuccessRecipientDownloadEmail() {
+interface SuccessDownloadEmailParams {
+  senderEmail: string,
+  recipientEmail?: string,
+  transferId: string,
+  origin: string,
+  subject: string,
+  message: string,
+  originalName: string,
+  archiveSize: number,
 }
 
-// Send email to user on success download via a share link (anonymous)
-export async function sendSuccessAnonymousDownloadEmail() {
+// Send email to user on success recipient download
+export async function sendSuccessDownloadEmail(params: SuccessDownloadEmailParams) {
+  let subject: string
+  if (params.recipientEmail) {
+    subject = `${params.recipientEmail} downloaded "${params.subject}"`
+  } else {
+    subject = `Someone downloaded "${params.subject}"`
+  }
+  const text = `${subject}
 
+  File: ${params.originalName}, ${humanSize(params.archiveSize)}
+  Message:
+  ${params.message}
+
+  View transfer:
+  ${params.origin}/transfers/${params.transferId}
+
+  Share link:
+  ${params.origin}/downloads/${params.transferId}
+  `
+
+  return sendMail({ to: params.senderEmail, subject, text })
 }

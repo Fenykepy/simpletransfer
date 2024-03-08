@@ -5,8 +5,9 @@ import invariant from "tiny-invariant"
 
 import { db } from "~/utils/db.server"
 import { streamArchive } from "~/utils/filesystem.server"
+import { sendSuccessDownloadEmail } from "~/utils/mail.server"
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   invariant(params.downloadId, "Missing downloadId param")
 
   // we search a recipient or a transfer with parameters id
@@ -19,6 +20,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       id: true,
       transferId: true,
       downloadDates: true,
+      email: true,
     }
   })
   let transferId = recipient ? recipient.transferId : params.downloadId
@@ -28,8 +30,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       active: true,
     },
     select: {
+      subject: true,
+      message: true,
       originalName: true,
       archiveName: true,
+      archiveSize: true,
       downloadDates: true,
       complete: true,
       user: {
@@ -80,7 +85,18 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
         })
       }
       
-      // TODO send email to sender
+      // Send email to sender
+      const url = new URL(request.url)
+      sendSuccessDownloadEmail({
+        senderEmail: transfer!.user.email,
+        recipientEmail: recipient?.email,
+        transferId: transferId,
+        origin: url.origin,
+        subject: transfer!.subject,
+        message: transfer!.message,
+        originalName: transfer!.originalName,
+        archiveSize: transfer!.archiveSize,
+      })
     
     } catch (error) {
       console.error(error)
