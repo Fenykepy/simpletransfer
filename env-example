@@ -24,11 +24,36 @@ TRANSFERS_DIRECTORY='/var/www/simpletransfer/transfersData'
 # Must be a full path to the directory and directory must exists (it won't be created).
 # (without trailing '/')
 DROPBOX_DIRECTORY='/var/www/simpletransfer/dropbox'
-# sqlite data base file
-DATABASE_URL="file:./simpletransfer.sqlite"
 # Session secret, change for a random string before deployment
 SESSION_SECRET="my_secret"
 
 
 
+## Database configuration
+
+# sqlite data base file
+DATABASE_URL="file:./simpletransfer.sqlite"
+
+
+
+## Nodemailer configuration ##
+
+# Email address mails will be send from
+MAIL_SENDER='my_mail@my_domain.com'
+
+# Prefix added before mail subject
+MAIL_SUBJECT_PREFIX='[SimpleTransfer] '
+
+# Transport configuration
+MAIL_HOST='mail.my_domain.com'
+MAIL_PORT=587
+MAIL_SECURE=0
+MAIL_AUTH_USER='my_mail@my_domain.com'
+MAIL_AUTH_PASS='my_password'
+
+# Development configuration (ethereal.email)
+DEV_MAIL_HOST='smtp.ethereal.email'
+DEV_MAIL_PORT=587
+DEV_MAIL_AUTH_USER='my_user@ethereal.email'
+DEV_MAIL_AUTH_PASS='my_password'
 

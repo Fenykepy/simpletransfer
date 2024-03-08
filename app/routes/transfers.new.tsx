@@ -17,6 +17,7 @@ import {
 } from "~/utils/filesystem.server"
 import { requireUserId } from "~/utils/session.server"
 import { badRequest } from "~/utils/request.server"
+import { sendNewTransferEmails } from "~/utils/mail.server"
 import {
   validateEmail,
 } from "~/utils/validate"
@@ -144,7 +145,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     })
   )
   
-  // TODO send emails
+  // Send emails to recipients and sender
+  // We don't await so response can be send before mailing end
+  const url = new URL(request.url)
+  sendNewTransferEmails(transfer.id, url.origin)
 
   return redirect(`/transfers/${transfer.id}`)
 }
