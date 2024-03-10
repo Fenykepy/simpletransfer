@@ -1,0 +1,15 @@
+{{{ subject }}}
+
+{{#if to }}To: {{{ to }}}
+{{/if}}{{#if errors }}Errors: {{{ errors }}}
+{{/if}}File: {{{ filename }}}, {{{ filesize }}}
+
+Message:
+
+{{{ message }}}
+
+View transfer:
+{{{ transferLink }}}
+
+Share link:
+{{{ shareLink }}}

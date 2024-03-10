@@ -67,6 +67,7 @@ export default function TransferRoute() {
             <ul className="inline-block text-sm ml-1">
               {data.recipients.map(recipient => (
                 <EmailChip
+                  key={recipient.email}
                   email={recipient.email}
                   title={recipient.complete ? "Downloaded" : "Not downloaded yet"}
                   color={!recipient.active ? "pink" : recipient.complete ? "green" : "cyan"}

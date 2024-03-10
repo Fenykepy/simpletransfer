@@ -1,4 +1,6 @@
+import fs from "node:fs/promises"
 import nodemailer from "nodemailer"
+import Handlebars from "handlebars"
 
 import { db } from "./db.server"
 import { humanSize } from "./humanSize"
@@ -30,6 +32,14 @@ if (process.env.NODE_ENV === "production") {
       pass: process.env.DEV_MAIL_AUTH_PASS,
     },
   }
+}
+
+function getTransferLink(origin: string, id: string) {
+  return `${origin}/transfers/${id}`
+}
+
+function getDownloadLink(origin: string, id: string) {
+  return `${origin}/downloads/${id}`
 }
 
 const mailer = nodemailer.createTransport(mailConfig)
@@ -65,9 +75,20 @@ interface RecipientNewTransferEmailParams {
   archiveSize: number,
 }
 
+const recipientEmailTextRaw = await fs.readFile('./app/templates/recipientEmail.txt', 'utf-8')
+const recipientEmailTextTemplate = Handlebars.compile(recipientEmailTextRaw)
+
 // Send email to recipient on success new transfer
 function sendRecipientNewTransferEmail(params: RecipientNewTransferEmailParams) {
   const subject = `"${params.senderEmail}" sent you "${params.subject}"`
+  const text = recipientEmailTextTemplate({
+    subject,
+    filename: params.originalName,
+    filesize: humanSize(params.archiveSize),
+    message: params.message,
+    downloadLink: getDownloadLink(params.origin, params.downloadId),
+  })
+  /*
   const text = `${subject}
 
   File: ${params.originalName}, ${humanSize(params.archiveSize)}
@@ -77,6 +98,7 @@ function sendRecipientNewTransferEmail(params: RecipientNewTransferEmailParams) 
   Download link:
   ${params.origin}/downloads/${params.downloadId}
   `
+  */
   return sendMail({ to: params.recipientEmail, subject, text, replyTo: params.senderEmail })
 }
 
@@ -92,24 +114,23 @@ interface SenderNewTransferEmailParams {
   archiveSize: number,
 }
 
+const senderEmailTextRaw = await fs.readFile('./app/templates/senderEmail.txt', 'utf-8')
+const senderEmailTextTemplate = Handlebars.compile(senderEmailTextRaw)
+
 // Send email to user on success new transfer
 async function sendSenderNewTransferEmail(params: SenderNewTransferEmailParams) {
   const errors = params.errorEmails.length > 0
   const subject = `"${params.subject}" ${errors ? "sent with errors..." : "successfully sent!"}`
-  const text = `${subject}
-
-  To: ${params.successEmails.join(", ")}${errors ? `\nErrors: ${params.errorEmails.join(", ")}` : ""}
-  File: ${params.originalName}, ${humanSize(params.archiveSize)}
-
-  Message:
-  ${params.message}
-
-  View transfer:
-  ${params.origin}/transfers/${params.transferId}
-
-  Share link:
-  ${params.origin}/downloads/${params.transferId}
-  `
+  const text = senderEmailTextTemplate({
+    subject,
+    to: params.successEmails.join(", "),
+    errors: errors ? params.errorEmails.join(", ") : undefined,
+    filename: params.originalName,
+    filesize: humanSize(params.archiveSize),
+    message: params.message,
+    transferLink: getTransferLink(params.origin, params.transferId),
+    shareLink: getDownloadLink(params.origin, params.transferId),
+  })
 
   return sendMail({ to: params.senderEmail, subject, text })
 }
@@ -187,18 +208,14 @@ export async function sendSuccessDownloadEmail(params: SuccessDownloadEmailParam
   } else {
     subject = `Someone downloaded "${params.subject}"`
   }
-  const text = `${subject}
-
-  File: ${params.originalName}, ${humanSize(params.archiveSize)}
-  Message:
-  ${params.message}
-
-  View transfer:
-  ${params.origin}/transfers/${params.transferId}
-
-  Share link:
-  ${params.origin}/downloads/${params.transferId}
-  `
-
+  const text = senderEmailTextTemplate({
+    subject,
+    filename: params.originalName,
+    filesize: humanSize(params.archiveSize),
+    message: params.message,
+    transferLink: getTransferLink(params.origin, params.transferId),
+    shareLink: getDownloadLink(params.origin, params.transferId),
+  })
   return sendMail({ to: params.senderEmail, subject, text })
 }
+
