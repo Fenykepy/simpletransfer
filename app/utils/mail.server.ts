@@ -32,24 +32,39 @@ if (process.env.NODE_ENV === "production") {
   }
 }
 
-function getTransferLink(origin: string, id: string) {
-  return `${origin}/transfers/${id}`
+
+function getTransferLink(id: string) {
+  return `/transfers/${id}`
 }
 
-function getDownloadLink(origin: string, id: string) {
-  return `${origin}/downloads/${id}`
+function getDownloadLink(id: string) {
+  return `/downloads/${id}`
 }
 
 const mailer = nodemailer.createTransport(mailConfig)
+
+const textEmailRaw = await fs.readFile('./app/templates/textEmail.handlebars', 'utf-8')
+const textEmailTemplate = Handlebars.compile(textEmailRaw)
+
+const htmlEmailRaw = await fs.readFile('./app/templates/htmlEmail.handlebars', 'utf-8')
+const htmlEmailTemplate = Handlebars.compile(htmlEmailRaw)
+const rawCss = await fs.readFile('./app/templates/email.css', 'utf-8')
+const minifiedCss = rawCss.replace("\n", "")
+Handlebars.registerPartial('cssPartial', minifiedCss)
+Handlebars.registerHelper('comaJoined', function (array) {
+  return array.join(", ")
+})
+
 
 interface SendMailParams {
   to: string,
   subject: string,
   text: string,
+  html?: string,
   replyTo?: string,
 }
 
-function sendMail({ to, subject, text, replyTo }: SendMailParams) {
+function sendMail({ to, subject, text, html, replyTo }: SendMailParams) {
   return mailer.sendMail(
     {
       from: sender,
@@ -57,6 +72,7 @@ function sendMail({ to, subject, text, replyTo }: SendMailParams) {
       to,
       subject: subject_prefix + subject,
       text,
+      html,
     },
   )
 }
@@ -73,21 +89,23 @@ interface RecipientNewTransferEmailParams {
   archiveSize: number,
 }
 
-const recipientEmailTextRaw = await fs.readFile('./app/templates/recipientEmail.txt', 'utf-8')
-const recipientEmailTextTemplate = Handlebars.compile(recipientEmailTextRaw)
-
 // Send email to recipient on success new transfer
 function sendRecipientNewTransferEmail(params: RecipientNewTransferEmailParams) {
   const subject = `"${params.senderEmail}" sent you "${params.subject}"`
-  const text = recipientEmailTextTemplate({
-    subject,
+  const emailContext = {
+    title: "You received a transfer!",
+    from: params.senderEmail,
     filename: params.originalName,
     filesize: humanSize(params.archiveSize),
+    subject: params.subject,
     message: params.message,
-    downloadLink: getDownloadLink(params.origin, params.downloadId),
-  })
-  
-  return sendMail({ to: params.recipientEmail, subject, text, replyTo: params.senderEmail })
+    downloadLink: getDownloadLink(params.downloadId),
+    origin: params.origin,
+  }
+  const text = textEmailTemplate(emailContext)
+  const html = htmlEmailTemplate(emailContext)
+
+  return sendMail({ to: params.recipientEmail, subject, text, html, replyTo: params.senderEmail })
 }
 
 interface SenderNewTransferEmailParams {
@@ -102,25 +120,26 @@ interface SenderNewTransferEmailParams {
   archiveSize: number,
 }
 
-const senderEmailTextRaw = await fs.readFile('./app/templates/senderEmail.txt', 'utf-8')
-const senderEmailTextTemplate = Handlebars.compile(senderEmailTextRaw)
-
 // Send email to user on success new transfer
 async function sendSenderNewTransferEmail(params: SenderNewTransferEmailParams) {
   const errors = params.errorEmails.length > 0
   const subject = `"${params.subject}" ${errors ? "sent with errors..." : "successfully sent!"}`
-  const text = senderEmailTextTemplate({
-    subject,
-    to: params.successEmails.join(", "),
-    errors: errors ? params.errorEmails.join(", ") : undefined,
+  const emailContext = {
+    title: `Transfer ${errors ? "sent with errors..." : "successfully sent!"}`,
+    to: params.successEmails,
+    errors: errors ? params.errorEmails : undefined,
     filename: params.originalName,
     filesize: humanSize(params.archiveSize),
+    subject: params.subject,
     message: params.message,
-    transferLink: getTransferLink(params.origin, params.transferId),
-    shareLink: getDownloadLink(params.origin, params.transferId),
-  })
+    transferLink: getTransferLink(params.transferId),
+    shareLink: getDownloadLink(params.transferId),
+    origin: params.origin,
+  }
+  const text = textEmailTemplate(emailContext)
+  const html = htmlEmailTemplate(emailContext)
 
-  return sendMail({ to: params.senderEmail, subject, text })
+  return sendMail({ to: params.senderEmail, subject, text, html })
 }
 
 // Send emails to user and recipients on success new transfer
@@ -191,19 +210,27 @@ interface SuccessDownloadEmailParams {
 // Send email to user on success recipient download
 export async function sendSuccessDownloadEmail(params: SuccessDownloadEmailParams) {
   let subject: string
+  let title: string
   if (params.recipientEmail) {
     subject = `${params.recipientEmail} downloaded "${params.subject}"`
+    title = `${params.recipientEmail} downloaded your transfer`
   } else {
     subject = `Someone downloaded "${params.subject}"`
+    title = "Someone downloaded your transfer"
   }
-  const text = senderEmailTextTemplate({
-    subject,
+  const emailContext = {
+    title,
     filename: params.originalName,
     filesize: humanSize(params.archiveSize),
+    subject: params.subject,
     message: params.message,
-    transferLink: getTransferLink(params.origin, params.transferId),
-    shareLink: getDownloadLink(params.origin, params.transferId),
-  })
-  return sendMail({ to: params.senderEmail, subject, text })
+    transferLink: getTransferLink(params.transferId),
+    shareLink: getDownloadLink(params.transferId),
+    origin: params.origin,
+  }
+  const text = textEmailTemplate(emailContext)
+  const html = htmlEmailTemplate(emailContext)
+  
+  return sendMail({ to: params.senderEmail, subject, text, html })
 }
 

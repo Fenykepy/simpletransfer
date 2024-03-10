@@ -1,0 +1,19 @@
+{{{ title }}}
+
+{{#if to }}To: {{{ comaJoined to }}}
+{{/if}}{{#if errors }}Errors: {{{ comaJoined errors }}}
+{{/if}}{{#if from }}From: {{{ from }}}
+{{/if}}File: {{{ filename }}}, {{{ filesize }}}
+Subject: {{{ subject }}}
+Message:
+
+{{{ message }}}
+
+{{#if downloadLink}}Download link:
+{{{ origin }}}{{{ downloadLink }}}
+{{/if}}{{#if transferLink}}View transfer:
+{{{ origin }}}{{{ transferLink }}}
+{{/if}}{{#if shareLink}}
+Share link:
+{{{ origin }}}{{{ shareLink }}}
+{{/if}}

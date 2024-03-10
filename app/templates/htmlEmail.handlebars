@@ -6,7 +6,7 @@
     <title>SimpleTransfer</title>
 
     <style>
-        {{{ css }}}
+        {{> cssPartial }}
     </style>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   </head>
@@ -24,62 +24,74 @@
         </header>
         <article>
           <header>
-            <div class="emailList">
-              <span class="emailListTitle">From:</span><ul>
-                <li class="email validEmail">fenykepy@fenykepy.com</li>
-              </ul>
-            </div>
+            {{#if from }}
+              <div class="emailList">
+                <span class="emailListTitle">From:</span><ul>
+                  <li class="email validEmail">{{ from }}</li>
+                </ul>
+              </div>
+            {{/if}}
 
-            <div class="emailList">
-              <span class="emailListTitle">To:</span><ul>
-                <li class="email validEmail">tina@example.com</li>
-                <li class="email validEmail">tom@example.com</li>
-              </ul>
-            </div>
+            {{#if to }}
+              <div class="emailList">
+                <span class="emailListTitle">To:</span><ul>
+                  {{#each to}}
+                    <li class="email validEmail">{{ this }}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
 
-            <div class="emailList">
-              <span class="emailListTitle">Errors:</span><ul>
-                <li class="email errorEmail">fenykepy@fenykepy.com</li>
-              </ul>
-            </div>
+            {{#if errors }}
+              <div class="emailList">
+                <span class="emailListTitle">Errors:</span><ul>
+                  {{#each errors}}
+                    <li class="email errorEmail">{{ this }}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
 
             <div class="fileInfo">
               <div>
                 <span class="fileInfoTitle">File:</span>
-                <span class="filename">my_file.md</span>
+                <span class="filename">{{ filename }}</span>
               </div>
-              <div class="fileSize">7.5 MB</div>
+              <div class="fileSize">{{ filesize }}</div>
             </div>
           </header>
           <div class="messageWrapper">
-            <h2>Photos du weekend dernier</h2>
-            <div class="message">Hi!
-Here are our last christmas pictures.
-Enjoy!
-            </div>
+            <h2>{{ subject }}</h2>
+            <div class="message">{{ message }}</div>
           </div>
           <footer>
-            <div class="downloadLinkWrapper">
-              <a class="downloadLink" href="">
-                <div>Download</div>
-                <img
-                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAACXBIWXMAAABYAAAAWAF42ktiAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJxJREFUKJGdkTsKwkAURU/igEX2YZnVuAALXYILyA6sA3YW/gq34x7sRVCOzQwmQ0LACwMX7rkP3ptCJdMcuEa/BF69VM1f7U91npf5+Cn9XVhMcEViSqAB7kAbgyG4jUwTgCoGG+AJ7LPCDlhHX6EG9dS5zG3EH9WQzjVTD47rEgf3/mGsdE5wXhgq9WCVkC34AVbAAxDYAu8u8AVyCt9P+M35VwAAAABJRU5ErkJggg=="
-                  alt="Transfer Icon"
-                  width="12"
-                  height="12"
-                />
-              </a>
-            </div>
+            {{#if downloadLink }}
+              <div class="downloadLinkWrapper">
+                <a class="downloadLink" href="{{ origin }}{{ downloadLink }}">
+                  <div>Download</div>
+                  <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAACXBIWXMAAABYAAAAWAF42ktiAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJxJREFUKJGdkTsKwkAURU/igEX2YZnVuAALXYILyA6sA3YW/gq34x7sRVCOzQwmQ0LACwMX7rkP3ptCJdMcuEa/BF69VM1f7U91npf5+Cn9XVhMcEViSqAB7kAbgyG4jUwTgCoGG+AJ7LPCDlhHX6EG9dS5zG3EH9WQzjVTD47rEgf3/mGsdE5wXhgq9WCVkC34AVbAAxDYAu8u8AVyCt9P+M35VwAAAABJRU5ErkJggg=="
+                    alt="Transfer Icon"
+                    width="12"
+                    height="12"
+                  />
+                </a>
+              </div>
+            {{/if}}
 
-            <div class="inlineLink">
-              <span class="inlineLinkTitle">Transfer link:</span>
-              <a href="/transfers/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4">/transfers/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4</a>
-            </div>
+            {{#if transferLink }}
+              <div class="inlineLink">
+                <span class="inlineLinkTitle">View transfer:</span>
+                <a href="{{ origin }}{{ transferLink }}">{{ transferLink }}</a>
+              </div>
+            {{/if}}
 
-            <div class="inlineLink">
-              <span class="inlineLinkTitle">Share link:</span>
-              <a href="/downloads/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4">/downloads/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4</a>
-            </div>
+            {{#if shareLink }}
+              <div class="inlineLink">
+                <span class="inlineLinkTitle">Share link:</span>
+                <a href="{{ origin }}{{ shareLink }}">{{ shareLink }}</a>
+              </div>
+            {{/if}}
           </footer>
         </article>
       </section>
