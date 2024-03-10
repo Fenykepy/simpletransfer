@@ -20,6 +20,15 @@ interface TransfersListProps {
 }
 
 export default function TransfersList({ transfers }: TransfersListProps) {
+  if (transfers.length === 0) {
+    return (
+    <ul className="card">
+      <li className="flex items-center mx-5 sm:mx-8 py-5 text-slate-900">
+        No transfers yet... New one ?
+      </li>
+    </ul>
+    )
+  }
   return (
     <ul className="card">
       {transfers.map(transfer => (
