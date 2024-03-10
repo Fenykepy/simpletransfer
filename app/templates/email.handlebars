@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SimpleTransfer</title>
+
+    <style>
+        {{{ css }}}
+    </style>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  </head>
+  <body>
+    <main>
+      <section>
+        <header>
+          <img
+            height="40"
+            width="40"
+            alt="SimpleTransfer logo"
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAEnAAABJwGNvPDMAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABI5JREFUWIXFmEtsVGUUx3/nm8elmQ7YEmoZwTQBh3ZaoEmDxBcRWkpFEzARdkSMsiJ2pShLXWiopgswRl2qK7oSAhOK2ITEGFgYQmmHPhJxAQVjDAJje+9M73HRmdLpTOHe6YP/bs4933d+c77zPUVVmY/k1FA0FHDixpiYChEAUdKuMTczlg7rq4kH8+rfL6CABM8Nviyu7hfYASQe4a7AoKK/qJiT2Y7ErzplW3hASY5aIXEOiuoHwHo/QWZoRJWuTFq+130JZ8EAl50d7FDRE/MAm60RUT08sbvp/OMcHwkoyVErpE6XiHYuEFhh//CdjdWpr623fQPKmf4qy5jTCi8tBtx0HPSibWf36N7mu54B5Ux/VVhMH8LmxYSboSuOndleCtLMNkhy1LKMOb2EcADNlhX8SXoGw7M/FAFaancv9rCWkiLbQpV6bLa9YIhzszW5pGSFUmNM+/iuhp/zhmlASY5aYexrlLmUvL3mKQ49Ww3At3/+ww83S9a8B8mQ84BN+XVyeohD4hwsFw6gO7GaLSsq2LKigu7E6nK7AXRDKOoeyP8yMLV95XaIshUJPCznykBRafuSqBwRkGnA4NnUKyzcLrEQigfPXHsB8hkUd9+T5SmWGLMfHg5x65PFKVbupISRU0NRoP4J85SQNknv1YgJBZw4uYJ8nASoDgXKDlkdCngLlAsXygafM8aYmBfv5UFD79Y6xtrq+bophvERyQh8szHGWFs9vVvrWB70NstNwH3GqErUi/Pn9bVsq44A8O7aKo43xjxlQ4ATjTHeWVMFwLbqCJ/V13oCVJXlnhes6Kx/fWhtFV0Njw/0RUMt762tKrBFAt7Tb0T0vhfHI6nbDKcLz5WddSv5JF4zZ5tP4zW8X7eywDactjl6/Y4nOBG9Z1zXveXF+badpfXSDVIPCiE/XreKj9atKvIvZR9JO7RfusFtO+sJ0J00N4W+gcrwuN7D40yutYKc31pHPGJ5CpLXUNr2BQeoE5iMmty9NeW11VyZfJRG0g67/MEB9Gv7prQBUPSCn5Z/2VnaL3uDHEk77Lz0B2P+4FDlAuS2OjWmx1drj5DlwgEg5iTkDqwCEk4OXAfifvupsYL0Pl9HQ2VhTQ7naq4sOOW6s7sxoaC5IUYVvvTfU+lMzgsOUKQr/0Ty8MjfMxgOV2o/ZWQRpmb38cbVKNA5MMadMuGAlFMzsVlbWjIFgADLzl7bqSLn8LjkLILUuLSOv97YlzcU7F8Tu5vOq8qJpeeakqLdM+GgxL04k+ZDQS8uHdaUVOjL1NhHZ9uLAHVfwrHt7B7gypKQTUX9PROceDNfdzNV8jSje5vvOnZm+1JkUoU+J2Tv0LaWf0t9n/O4pXub79oVf7cCx/D5KuqVTVWOZ+5Lx1xw4PEBs+Jcqs119SvQDQsElzIuh2dPiFLy/gTcMxgORd0DonKEMtdKkCFVjmWeHv+xVL3NC3C6AUgwOfCiwFuCtII2Mfe6qUC/KhfUuD2Zjo2/+QpWDmBRB71XI6HJYNwYN5a/34jofdc1tzKT40P6Rst/8+n/f2A09ewFlf3IAAAAAElFTkSuQmCC"
+          />
+          <h1>{{ title }}</h1>
+        </header>
+        <article>
+          <header>
+            <div class="emailList">
+              <span class="emailListTitle">From:</span><ul>
+                <li class="email validEmail">fenykepy@fenykepy.com</li>
+              </ul>
+            </div>
+
+            <div class="emailList">
+              <span class="emailListTitle">To:</span><ul>
+                <li class="email validEmail">tina@example.com</li>
+                <li class="email validEmail">tom@example.com</li>
+              </ul>
+            </div>
+
+            <div class="emailList">
+              <span class="emailListTitle">Errors:</span><ul>
+                <li class="email errorEmail">fenykepy@fenykepy.com</li>
+              </ul>
+            </div>
+
+            <div class="fileInfo">
+              <div>
+                <span class="fileInfoTitle">File:</span>
+                <span class="filename">my_file.md</span>
+              </div>
+              <div class="fileSize">7.5 MB</div>
+            </div>
+          </header>
+          <div class="messageWrapper">
+            <h2>Photos du weekend dernier</h2>
+            <div class="message">Hi!
+Here are our last christmas pictures.
+Enjoy!
+            </div>
+          </div>
+          <footer>
+            <div class="downloadLinkWrapper">
+              <a class="downloadLink" href="">
+                <div>Download</div>
+                <img
+                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAACXBIWXMAAABYAAAAWAF42ktiAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJxJREFUKJGdkTsKwkAURU/igEX2YZnVuAALXYILyA6sA3YW/gq34x7sRVCOzQwmQ0LACwMX7rkP3ptCJdMcuEa/BF69VM1f7U91npf5+Cn9XVhMcEViSqAB7kAbgyG4jUwTgCoGG+AJ7LPCDlhHX6EG9dS5zG3EH9WQzjVTD47rEgf3/mGsdE5wXhgq9WCVkC34AVbAAxDYAu8u8AVyCt9P+M35VwAAAABJRU5ErkJggg=="
+                  alt="Transfer Icon"
+                  width="12"
+                  height="12"
+                />
+              </a>
+            </div>
+
+            <div class="inlineLink">
+              <span class="inlineLinkTitle">Transfer link:</span>
+              <a href="/transfers/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4">/transfers/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4</a>
+            </div>
+
+            <div class="inlineLink">
+              <span class="inlineLinkTitle">Share link:</span>
+              <a href="/downloads/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4">/downloads/4fba6c6c-2dbc-414c-8e90-67beccd0c2a4</a>
+            </div>
+          </footer>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

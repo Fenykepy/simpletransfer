@@ -4,8 +4,6 @@ import Handlebars from "handlebars"
 
 import { db } from "./db.server"
 import { humanSize } from "./humanSize"
-import SMTPTransport from "nodemailer/lib/smtp-transport"
-import { Recipient, Transfer } from "@prisma/client"
 
 let subject_prefix = process.env.MAIL_SUBJECT_PREFIX || ""
 let mailConfig: any
@@ -88,17 +86,7 @@ function sendRecipientNewTransferEmail(params: RecipientNewTransferEmailParams) 
     message: params.message,
     downloadLink: getDownloadLink(params.origin, params.downloadId),
   })
-  /*
-  const text = `${subject}
-
-  File: ${params.originalName}, ${humanSize(params.archiveSize)}
-  Message:
-  ${params.message}
-
-  Download link:
-  ${params.origin}/downloads/${params.downloadId}
-  `
-  */
+  
   return sendMail({ to: params.recipientEmail, subject, text, replyTo: params.senderEmail })
 }
 
