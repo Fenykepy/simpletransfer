@@ -11,7 +11,7 @@ interface UserButtonProps {
 }
 
 export default function UserButton({ user }: UserButtonProps) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   if (!user) return null
 

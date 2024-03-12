@@ -56,7 +56,7 @@ npx prisma push
 Add a user:
 
 ```shellscript
-
+npx vite-node ./manage.ts addUser --email <user_mail> --password <user_password>
 ```
 
 
@@ -79,4 +79,12 @@ Then run the app in production mode:
 
 ```sh
 npm start
+```
+
+
+## List command line utilities
+
+```shellscript
+cd simpletransfer
+npx vite-node ./manage.ts --help
 ```

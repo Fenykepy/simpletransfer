@@ -8,6 +8,23 @@ type LoginForm = {
   password: string
 }
 
+export async function updatePassword({ email, password }: LoginForm) {
+  const passwordHash = await bcrypt.hash(password, 10)
+  const user = await db.user.update({
+    where: { email },
+    data: { passwordHash },
+  })
+  return user
+}
+
+export async function updateEmail({ email, newEmail }: { email: string, newEmail: string }) {
+  const user = await db.user.update({
+    where: { email },
+    data: { email: newEmail },
+  })
+  return user
+}
+
 
 export async function register({ email, password }: LoginForm) {
   const passwordHash = await bcrypt.hash(password, 10)

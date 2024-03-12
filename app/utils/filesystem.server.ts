@@ -110,3 +110,12 @@ export async function streamArchive(zipName: string) {
   
   return createReadStream(zipPath)
 }
+
+export async function deleteArchive(zipName: string) {
+  const zipPath = path.join(transfersDirectoryPath, zipName)
+  if (!await isFile(zipPath)) {
+    throw new Error("Transfer file not found")
+  }
+  
+  await fs.rm(zipPath)
+}
