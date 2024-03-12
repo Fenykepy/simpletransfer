@@ -8,6 +8,7 @@ import {
   validateEmail,
   validatePassword,
 } from "./app/utils/validate"
+import { humanSize } from "./app/utils/humanSize"
 
 
 const rl = readline.createInterface({
@@ -27,6 +28,8 @@ help                                                                   show this
 --help                                                                 show this help
 -h                                                                     show this help
 
+transfersInfo                                                          show some info about transfers
+
 listUsers                                                              list all users
 addUser --email <user_mail> --password <user_password>                 add a new user
 updateUserPassword --email <user_mail> --newPassword <user_password>   update a user's password
@@ -37,6 +40,32 @@ deleteTransfer --id <transfer_id>                                      delete a 
 `
   console.log(helpString)
   process.exit()
+}
+
+
+/* List some infos */
+if (args[0] === "transfersInfo") {
+  const users = await db.user.aggregate({
+    _count: { id: true }
+  })
+
+  const allTransfers = await db.transfer.aggregate({
+    _count: { id: true },
+  })
+
+  const activeTransfers = await db.transfer.aggregate({
+    _count: { id: true },
+    _sum: { archiveSize: true },
+    where: { active: true },
+  })
+
+  const archiveSize = activeTransfers._sum.archiveSize || 0
+
+  console.log(`${users._count.id} users.`)
+  console.log(`${activeTransfers._count.id} active transfers.`)
+  console.log(`${allTransfers._count.id - activeTransfers._count.id} expired transfers.`)
+  console.log(`${allTransfers._count.id} transfers total.`)
+  console.log(`${humanSize(archiveSize)} of archives in transfers directory.`)
 }
 
 /* List existing users */
