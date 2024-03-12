@@ -1,4 +1,4 @@
-import type { LinksFunction } from "@remix-run/node"
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node"
 import {
   isRouteErrorResponse,
   Links,
@@ -8,10 +8,19 @@ import {
   ScrollRestoration,
   useRouteError,
 } from "@remix-run/react"
+import { json } from "@remix-run/node"
+import { useLoaderData } from "@remix-run/react"
 
+import { getUser } from "~/utils/session.server"
 import styles from "./tailwind.css?url"
 import MainHeader from "~/components/mainHeader"
 import MessageSection from "./components/messageSection"
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await getUser(request)
+
+  return json({ user: user })
+}
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -20,6 +29,9 @@ export const links: LinksFunction = () => [
 
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useLoaderData<typeof loader>()
+  
+  console.log("data", data)
   return (
     <html lang="en">
       <head>
@@ -30,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-slate-50">
-        <MainHeader />
+        <MainHeader user={data.user} />
         <main className="px-4 sm:px-16 py-5 sm:py-10">
           {children}
         </main>
